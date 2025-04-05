@@ -1,8 +1,8 @@
 Redmine::Plugin.register :redmine_timetracker_plugin do
-  name 'Redmine Timetracker Plugin plugin'
-  author 'Author name'
-  description 'This is a plugin for Redmine'
+  name 'Redmine Timetracker Plugin'
+  author 'Nikita Potapov'
+  description 'This is a time tracker plugin for Redmine'
   version '0.0.1'
-  url 'http://example.com/path/to/plugin'
-  author_url 'http://example.com/about'
+  url 'https://github.com/nspotapov/redmine_timetracker_plugin'
+  author_url 'ns.potapov@yandex.ru'
 end
