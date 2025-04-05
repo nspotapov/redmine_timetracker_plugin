@@ -1,0 +1,25 @@
+#timetracker-menu {
+    float: right;
+    margin-right: 2em;
+    color: #fff;
+
+    display: flex;
+    gap: 1em;
+}
+
+#timetracker-start {
+    filter: invert(63%) sepia(55%) saturate(4393%) hue-rotate(81deg) brightness(118%) contrast(122%);
+}
+
+#timetracker-stop {
+    filter: invert(62%) sepia(10%) saturate(5024%) hue-rotate(326deg) brightness(104%) contrast(103%);
+}
+
+#timetracker-pause,
+#timetracker-resume {
+    filter: invert(14%) sepia(77%) saturate(7498%) hue-rotate(359deg) brightness(105%) contrast(115%);
+}
+
+.timetracker-menu__control-item {
+    cursor: pointer;
+}

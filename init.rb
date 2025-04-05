@@ -1,3 +1,5 @@
+require File.dirname(__FILE__) + '/lib/redmine_timetracker_plugin/hooks.rb'
+
 Redmine::Plugin.register :redmine_timetracker_plugin do
   name 'Redmine Timetracker Plugin'
   author 'Nikita Potapov'
