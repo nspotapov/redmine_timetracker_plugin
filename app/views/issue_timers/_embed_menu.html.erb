@@ -2,6 +2,7 @@
 <% if !time_logger.nil? %>
     <% if time_logger.paused %>
         <%# A time tracker is in pause, display the tracked issue, the time spent and the resume/stop actions %>
+     
         <%= link_to ' #' + time_logger.issue_id.to_s + " / #{time_logger.time_spent_to_s} /",
                     {:controller => '/issues', :action => 'show', :id => time_logger.issue_id},
                     {:class => 'icon icon-pause'}
@@ -18,8 +19,10 @@
                     {:class => 'icon-action icon-stop-action',
                     :title => 'Остановить'}
         %>
+    
     <% else %>
         <%# A time tracker is running, display the tracked issue, the time spent and the suspend/stop actions %>
+    
         <%= link_to ' #' + time_logger.issue_id.to_s + " / #{time_logger.time_spent_to_s} /",
                     {:controller => '/issues', :action => 'show', :id => time_logger.issue_id},
                     {:class => 'icon-action icon-clock'}
