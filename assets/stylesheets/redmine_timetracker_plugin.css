@@ -20,6 +20,10 @@
     filter: invert(14%) sepia(77%) saturate(7498%) hue-rotate(359deg) brightness(105%) contrast(115%);
 }
 
+#timetracker-duration {
+    cursor: pointer;
+}
+
 .timetracker-menu__control-item {
     cursor: pointer;
 }

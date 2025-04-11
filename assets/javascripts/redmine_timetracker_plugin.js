@@ -4,6 +4,7 @@ class RedmineTimeTracker {
         this.currentIssueId = this._getCurrentIssueId();
         this.isActive = false;
         this.isPaused = false;
+        this.showSeconds = false;
         this.timerInterval = null;
         this.elapsedSeconds = 0;
     }
@@ -41,7 +42,7 @@ class RedmineTimeTracker {
         loggedAs.insertAdjacentHTML('afterend', `
         <div id="timetracker-menu">
           <a class="timetracker-menu__item" id="timetracker-issueid" href="#">#${this.currentIssueId}</a>
-          <span class="timetracker-menu__item" id="timetracker-duration" >${this._formatTime(this.elapsedSeconds)}</span>
+          <span class="timetracker-menu__item" id="timetracker-duration">${this._formatTime(this.elapsedSeconds)}</span>
           <span class="timetracker-menu__control-item" id="timetracker-start">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-play-fill" viewBox="0 0 16 16">
               <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393"/>
@@ -74,6 +75,11 @@ class RedmineTimeTracker {
         document.getElementById('timetracker-stop')?.addEventListener('click', () => this.stop());
         document.getElementById('timetracker-pause')?.addEventListener('click', () => this.pause());
         document.getElementById('timetracker-resume')?.addEventListener('click', () => this.resume());
+        document.getElementById('timetracker-duration')?.addEventListener('click', () => {
+            this.showSeconds = !this.showSeconds;
+            this._saveToStorage();
+            this._updateTimer();
+        });
     }
 
     // Форматирование времени
@@ -81,14 +87,16 @@ class RedmineTimeTracker {
         const hrs = Math.floor(seconds / 3600);
         const mins = Math.floor((seconds % 3600) / 60);
         const secs = seconds % 60;
-        return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        if (this.showSeconds) {
+            return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+        else {
+            return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
+        }
     }
 
     // Обновление таймера
     _updateTimer() {
-        // if (document.getElementById('timetracker-duration').style.display !== "block") {
-        // document.getElementById('timetracker-duration').style.display = "block";
-        // }
         document.getElementById('timetracker-duration').textContent =
             this._formatTime(this.elapsedSeconds);
     }
@@ -140,9 +148,6 @@ class RedmineTimeTracker {
         this.isPaused = false;
         clearInterval(this.timerInterval);
 
-        // Здесь можно добавить сохранение времени в Redmine через форму
-        // this._saveTimeToRedmine();
-
         this._updateUI();
         this._clearStorage();
 
@@ -183,6 +188,7 @@ class RedmineTimeTracker {
 
         localStorage.setItem(`timetracker`, JSON.stringify({
             issueId: this.currentIssueId,
+            showSeconds: this.showSeconds,
             elapsedSeconds: this.elapsedSeconds,
             isActive: this.isActive,
             isPaused: this.isPaused,
@@ -198,6 +204,7 @@ class RedmineTimeTracker {
         this.elapsedSeconds = parsed.elapsedSeconds || 0;
         this.isActive = parsed.isActive || false;
         this.isPaused = parsed.isPaused || false;
+        this.showSeconds = parsed.showSeconds || false;
 
         if (this.isActive && !this.isPaused) {
             // Восстанавливаем таймер, если он был активен
