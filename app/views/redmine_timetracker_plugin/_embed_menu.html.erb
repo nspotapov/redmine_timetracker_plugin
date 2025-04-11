@@ -1,3 +1,0 @@
-<% if User.current.logged? || !Setting.login_required? %>
-    <%= javascript_include_tag 'redmine_timetracker_plugin', plugin: :redmine_timetracker_plugin %>        
-<% end %>
