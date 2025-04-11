@@ -190,10 +190,7 @@ class RedmineTimeTracker {
         }));
     }
 
-    // Загрузка из localStorage
-    _loadFromStorage() {
-        if (!this.currentIssueId) return;
-
+    _loadData() {
         const data = localStorage.getItem(`timetracker`);
         if (!data) return;
 
@@ -206,6 +203,19 @@ class RedmineTimeTracker {
             // Восстанавливаем таймер, если он был активен
             const secondsPassed = Math.floor((Date.now() - parsed.lastUpdated) / 1000);
             this.elapsedSeconds += secondsPassed;
+        }
+
+        return parsed;
+    }
+
+    // Загрузка из localStorage
+    _loadFromStorage() {
+        if (!this.currentIssueId) return;
+
+        const parsed = this._loadData();
+
+        if (this.isActive && !this.isPaused) {
+            // Восстанавливаем таймер, если он был активен
             this.isPaused = true;
             this.resume();
         } else if (this.isActive && this.isPaused) {
@@ -247,7 +257,7 @@ class RedmineTimeTracker {
 // Инициализация плагина при загрузке страницы
 document.addEventListener('DOMContentLoaded', () => {
     const tracker = new RedmineTimeTracker();
-
+    tracker._loadData();
     if (tracker.currentUser && tracker.currentIssueId) {
         tracker.insertUI();
         tracker._loadFromStorage();
