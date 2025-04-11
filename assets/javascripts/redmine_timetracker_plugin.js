@@ -37,12 +37,11 @@ class RedmineTimeTracker {
     insertUI() {
         const loggedAs = document.getElementById('loggedas');
         if (!loggedAs || !this.currentUser || !this.currentIssueId) return;
-        // if (!loggedAs || !this.currentUser) return;
 
         loggedAs.insertAdjacentHTML('afterend', `
         <div id="timetracker-menu">
           <a class="timetracker-menu__item" id="timetracker-issueid" href="#">#${this.currentIssueId}</a>
-          <span class="timetracker-menu__item" id="timetracker-duration">${this._formatTime(this.elapsedSeconds)}</span>
+          <span class="timetracker-menu__item" id="timetracker-duration" style="display: none;">${this._formatTime(this.elapsedSeconds)}</span>
           <span class="timetracker-menu__control-item" id="timetracker-start">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-play-fill" viewBox="0 0 16 16">
               <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393"/>
@@ -77,7 +76,7 @@ class RedmineTimeTracker {
         document.getElementById('timetracker-resume')?.addEventListener('click', () => this.resume());
         document.getElementById('timetracker-duration')?.addEventListener('click', () => {
             this.showSeconds = !this.showSeconds;
-            this._saveToStorage();
+            if (this.isActive) this._saveToStorage();
             this._updateTimer();
         });
     }
@@ -160,6 +159,7 @@ class RedmineTimeTracker {
         const hide = (id) => document.getElementById(id).style.display = 'none';
 
         if (this.isActive) {
+            show('timetracker-duration');
             hide('timetracker-start');
             show('timetracker-stop');
 
@@ -172,6 +172,7 @@ class RedmineTimeTracker {
             }
         } else {
             show('timetracker-start');
+            hide('timetracker-duration');
             hide('timetracker-pause');
             hide('timetracker-stop');
             hide('timetracker-resume');
@@ -255,7 +256,7 @@ class RedmineTimeTracker {
 
     // Сохранение времени в Redmine через форму (альтернатива API)
     _saveTimeToRedmine() {
-        if (!this.currentIssueId || this.elapsedSeconds < 60) return;
+        if (!this.currentIssueId) return;
 
         window.location = this._createTimeEntryLink();
     }
