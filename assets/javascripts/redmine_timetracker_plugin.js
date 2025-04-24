@@ -242,8 +242,8 @@ class RedmineTimeTracker {
         let issueId = this.currentIssueId;
         const hours = (this.elapsedSeconds / 3600).toFixed(2);
 
-        let url = `${window.location.origin}/issues/${issueId}/time_entries/new?`;
-        url += `time_entry[hours]=${encodeURIComponent(hours)}`;
+        let url = `${window.location.origin}/issues/${issueId}/edit?`;
+        url += `tab=time_entries&time_entry[hours]=${encodeURIComponent(hours)}`;
 
         return url;
     }
