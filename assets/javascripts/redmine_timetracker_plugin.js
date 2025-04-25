@@ -7,6 +7,7 @@ class RedmineTimeTracker {
         this.showSeconds = false;
         this.timerInterval = null;
         this.elapsedSeconds = 0;
+        this.startDate = null;
     }
 
     // Получаем информацию о пользователе из DOM
@@ -33,6 +34,15 @@ class RedmineTimeTracker {
         }
     }
 
+    _getElapsedTimeString() {
+
+        let elapsedTime = this.elapsedSeconds;
+        if (this.isActive && !this.isPaused) {
+            elapsedTime += Math.floor((Date.now() - this.startDate) / 1000);
+        }
+        return this._formatTime(elapsedTime);
+    }
+
     // Вставляем HTML нашего плагина
     insertUI() {
         const loggedAs = document.getElementById('loggedas');
@@ -41,7 +51,7 @@ class RedmineTimeTracker {
         loggedAs.insertAdjacentHTML('afterend', `
         <div id="timetracker-menu">
           <a class="timetracker-menu__item" id="timetracker-issueid" href="#">#${this.currentIssueId}</a>
-          <span class="timetracker-menu__item" id="timetracker-duration" style="display: none;">${this._formatTime(this.elapsedSeconds)}</span>
+          <span class="timetracker-menu__item" id="timetracker-duration" style="display: none;">${this._getElapsedTimeString()}</span>
           <span class="timetracker-menu__control-item" id="timetracker-start">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-play-fill" viewBox="0 0 16 16">
               <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393"/>
@@ -96,13 +106,11 @@ class RedmineTimeTracker {
 
     // Обновление таймера
     _updateTimer() {
-        document.getElementById('timetracker-duration').textContent =
-            this._formatTime(this.elapsedSeconds);
+        document.getElementById('timetracker-duration').textContent = this._getElapsedTimeString();
     }
 
     _startInterval() {
         return setInterval(() => {
-            this.elapsedSeconds += 1;
             this._updateTimer();
         }, 1000);
     }
@@ -114,6 +122,7 @@ class RedmineTimeTracker {
         this.isActive = true;
         this.isPaused = false;
         this.elapsedSeconds = 0;
+        this.startDate = Date.now();
 
         this.timerInterval = this._startInterval();
 
@@ -126,6 +135,7 @@ class RedmineTimeTracker {
 
         this.isPaused = true;
         clearInterval(this.timerInterval);
+        this.elapsedSeconds += Math.floor((Date.now() - this.startDate) / 1000);
         this._updateUI();
         this._saveToStorage();
     }
@@ -134,6 +144,7 @@ class RedmineTimeTracker {
         if (!this.isActive || !this.isPaused) return;
 
         this.isPaused = false;
+        this.startDate = Date.now();
         this.timerInterval = this._startInterval();
 
         this._updateUI();
@@ -146,6 +157,7 @@ class RedmineTimeTracker {
         this.isActive = false;
         this.isPaused = false;
         clearInterval(this.timerInterval);
+        this.elapsedSeconds += Math.floor((Date.now() - this.startDate) / 1000);
 
         this._updateUI();
         this._clearStorage();
@@ -211,6 +223,7 @@ class RedmineTimeTracker {
             // Восстанавливаем таймер, если он был активен
             const secondsPassed = Math.floor((Date.now() - parsed.lastUpdated) / 1000);
             this.elapsedSeconds += secondsPassed;
+            this.startDate = Date.now();
         }
 
         return parsed;
@@ -220,7 +233,7 @@ class RedmineTimeTracker {
     _loadFromStorage() {
         if (!this.currentIssueId) return;
 
-        const parsed = this._loadData();
+        this._loadData();
 
         if (this.isActive && !this.isPaused) {
             // Восстанавливаем таймер, если он был активен
