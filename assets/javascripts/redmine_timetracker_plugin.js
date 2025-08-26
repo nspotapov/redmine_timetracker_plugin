@@ -153,12 +153,15 @@ class RedmineTimeTracker {
 
     stop() {
         if (!this.isActive) return;
-
+        
+        if (!this.isPaused) {
+            this.elapsedSeconds += Math.floor((Date.now() - this.startDate) / 1000);
+        }
+        
         this.isActive = false;
         this.isPaused = false;
         clearInterval(this.timerInterval);
-        this.elapsedSeconds += Math.floor((Date.now() - this.startDate) / 1000);
-
+        
         this._updateUI();
         this._clearStorage();
 
