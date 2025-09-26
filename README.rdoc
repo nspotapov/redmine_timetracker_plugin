@@ -1,3 +1,0 @@
-= redmine_timetracker_plugin
-
-Description goes here
